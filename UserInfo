@@ -1,0 +1,60 @@
+package NetflixProject;
+
+import java.util.HashMap;
+
+public class UserInfo {
+
+	
+	
+	public String id;
+	public double p_val;
+	private double avgRating;
+	
+	HashMap<Double, Double> map = new HashMap<Double, Double>();
+	
+	public UserInfo(String id) {
+		this.id = id;
+	}
+	
+	public  void  addRating(double  movieID, double  rating) {
+		map.put(movieID, rating);
+	}
+	
+	
+	public void  averageRating() {
+		double avg = 0.00000000;
+		double counter  = 0.0000000;
+		
+		// how to loop through rating hash map
+		for(double i: map.values()) {
+			avg = avg + i;
+			counter =  counter+1.0000000;
+		}
+		
+		avgRating = avg/counter;
+		
+	}
+	
+	public double getAvgRating() {
+		
+		return this.avgRating;
+	}
+	
+	
+	public double get_p() {
+		return this.p_val;
+	}
+	
+	
+
+	public void add_P_value1(double p2) {
+	this.p_val= p2;
+		
+	}
+
+	
+
+	
+	
+	
+}
