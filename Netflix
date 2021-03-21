@@ -1,0 +1,421 @@
+package NetflixProject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import Hw4.someClass;
+
+public class Netflix {
+
+	
+	public static HashMap<String, Double> k_closest = new HashMap<String, Double>();
+
+
+	public static File[] get_all_movies() throws FileNotFoundException  {
+		   long startTimes = System.nanoTime();
+		            
+		File folder = new File("moviedata");
+		File[] listOfFiles = folder.listFiles();
+
+		
+		FilenameFilter filter = new FilenameFilter() {
+            public boolean accept(File f, String name) {
+                // We want to find only .c files
+                return name.endsWith(".txt");
+            }
+        };
+
+        // Note that this time we are using a File class as an array,
+        // instead of String
+        listOfFiles = folder.listFiles(filter);
+		   
+        long endTimes = System.nanoTime();
+	   	 
+	    
+        long timeElapseds = endTimes - startTimes;
+       
+        System.out.println("Execution time for creating all_files in milliseconds  : " + timeElapseds/ 1000000);
+        
+        
+		return listOfFiles;
+		
+	}
+	
+	
+	
+	public static HashMap<String, UserInfo> put_into_map(File[] all_movies) throws Exception {
+		
+				// store all the data i need in this function...
+		
+		HashMap<String, UserInfo> big_map = new HashMap<String, UserInfo>();
+			
+			int Count = 0;
+			
+			
+			
+			
+			 
+			 for(File movie: all_movies) {
+				
+			Scanner s= new Scanner(movie);
+			
+			
+		 	String  movieID = s.nextLine();
+		 	movieID= movieID.replace(":", "");
+		 	double MovieID_num=Integer.parseInt(movieID)+0.0;  
+		 	// I am able to extract ID from each movie
+		 
+		 	
+             //reading line by line
+             while (s.hasNextLine()) {
+            	 String input = s.nextLine();
+            	
+            		
+            		String[] line_array = input.split(",");
+            		
+            		String userN = line_array[0];
+            		            		
+            		String r =  line_array[1];
+            		double rating  = Integer.parseInt(r)+0.00;
+            		
+            		 
+            		           	     		      
+		           if(big_map.containsKey(userN)|| rating==0 ){
+		        	   big_map.get(userN).addRating(MovieID_num, rating);
+		           }
+		          
+		           else {
+		        	   
+		        	  UserInfo UI =  new  UserInfo(userN);
+		        	  // System.out.println("Users: " + userN);
+			          // System.out.println("Rating: " + rating);
+		        	  
+					 UI.addRating(MovieID_num, rating);
+		        	 big_map.put(userN, UI);
+		        	 
+					
+		        	   
+		        	  
+		        	  
+		     }         	 
+             }
+   	s.close();
+	}
+			return big_map;
+			
+			
+	}
+	
+	
+	
+	
+public static double getE_ij(HashMap<String, UserInfo> big_map, String i, String j) throws FileNotFoundException {
+		
+		
+		// EQ:  Summation of (r_i - U)(r_j -  U) / #  common ratings
+		
+		double E = 0.0000000;
+		double counter=0.000000;
+		
+		UserInfo user_info_i = big_map.get(i);
+		UserInfo user_info_j = big_map.get(j);
+		
+		//user_info_i.averageRating();
+	//	user_info_j.averageRating();
+		
+		double U_i=  user_info_i.getAvgRating();// access (UserINFO(i).averageRating
+		double U_j=  user_info_j.getAvgRating();// access (UserINFO(i).averageRating
+	
+	
+	
+		 for( double movies_1 :user_info_i.map.keySet()) { 
+			
+			
+			 
+			 for( double movies_2 :user_info_j.map.keySet()) { 
+				 		
+				
+				
+				 if(movies_1 == movies_2) {
+					 
+					
+					 counter= counter +1.000000;
+											
+				   double last = (user_info_i.map.get(movies_2)  - U_i) * (user_info_j.map.get(movies_2)  - U_j);
+				    E=E+last;		 
+			 }
+				 
+				 
+				 else {
+					
+					// if  they are not 'similar' nothing happens
+				 }
+		 }
+	    	
+  	
+	        
+		}
+		if(counter !=0) {
+			double E_value = E / counter;
+			return E_value;
+		}
+		else {
+			
+			return 0;
+			
+		}
+		
+				
+	}
+	
+	
+
+public static double getO_value(HashMap<String, UserInfo> big_map, String i) throws FileNotFoundException {
+	
+	
+	UserInfo user_i =big_map.get(i);
+	double O_i=0.00000000;
+	double counter=0.00000000;
+	user_i.averageRating();
+	double U_i=  user_i.getAvgRating();
+	
+	
+	
+	 
+	 double r_i = 0.0;
+		 
+	 
+     for( double rate :user_i.map.keySet()) { 
+    	 counter= counter +1.00000;
+        
+         r_i =  rate; 
+       
+        
+         O_i = O_i + Math.pow( r_i - U_i, 2);
+         
+     }
+    
+    
+  
+     O_i  =  O_i  / counter;
+     
+    	 O_i = Math.pow(O_i, .5) ; 	
+    	 
+    	
+    	 
+    	
+    		return O_i;
+		
+		
+     
+    
+	}
+
+
+public static Set<String> get_P_i_j(HashMap<String, UserInfo> big_map, String i) throws FileNotFoundException {
+		// find  set of closest neighbors and store 'P' value
+	HashMap<Double, String> p_map = new HashMap<Double, String>();
+	// add p_value as key and user ID as the value...
+	ArrayList<String> top_user_list=  new ArrayList<String>();
+	
+	double[] p_values= new  double[big_map.keySet().size()];
+	int counting=0;
+	
+	double O_i = getO_value( big_map, i);
+	
+	
+	for(  String user: big_map.keySet())   {
+		
+		double O_j = getO_value( big_map, user);
+		
+	
+		
+		if((O_j * O_i) ==0) {
+			p_values[counting]=  big_map.get(i).getAvgRating();
+			p_map.put(big_map.get(i).getAvgRating(), user)	;	 
+			
+			
+			counting++;}
+		
+		else if(user.equals(i)) {
+			// can not be neighbors with yourself
+		}
+		
+		
+		
+		else {
+		
+			double E_value = getE_ij( big_map, i, user);
+		//	System.out.println( "E  value is: "+E_value  );
+			double P = E_value / (O_j * O_i);
+			//System.out.println( "P  value is: "+P  );
+			p_values[counting]= P;
+			p_map.put(P, user);
+			counting++;
+		}
+				
+}
+	
+	p_values =  Merge.fancySort(p_values, 0,big_map.keySet().size() );
+	//fastest sorting algorithm
+	double[] top_p_values  = new double[200];
+	int val=0;
+	
+	
+	
+	
+	
+	for(int num=big_map.keySet().size()-200; num<=big_map.keySet().size()-1; num++)  {
+		
+		top_p_values[val]=  p_values[num]; 
+		// find top 200 P values
+		String top_user = p_map.get(top_p_values[val]);
+		// get  the userID^^
+		big_map.get(top_user).add_P_value1(top_p_values[val]);
+		//add 'p' value into USerInfo class
+		if(top_user !=  null ||  top_user != top_user_list.get(val-1)) {
+			top_user_list.add(top_user) ;
+			val++;
+		}
+		
+		
+	}
+	Set<String> s = new HashSet<>(top_user_list);
+	// return set of closest neighbors, no duplicates and no 'i' value...
+	
+	return s;
+			
+
+
+}
+
+public static double predict_r(Set<String> top_users, HashMap<String, UserInfo> big_map, String i, double MovieID) {
+	double r_hat = 0;
+	double numer = 0;
+	double denom = 0;
+	for(String s: top_users) {
+		
+		if( big_map.get(s).map.get(MovieID)!= null  ) { // if the neighbor watched the movie...
+			
+			double p_s =  big_map.get(s).get_p();
+			numer = numer + p_s * (big_map.get(s).map.get(MovieID)  - big_map.get(s).getAvgRating());
+			denom = denom + p_s;
+			
+		}
+		
+	}
+	
+	if(denom==0) {
+		return big_map.get(i).getAvgRating();
+	}
+	double result = (numer / denom) + big_map.get(i).getAvgRating();
+	return result;
+	
+}
+
+
+public static double RMSE_user_i(Set<String> top_users, String i , HashMap<String, UserInfo> big_map   ) {
+	// use user i and find his predicted for every movie
+	double  numer=0;
+	int count=0;
+	for(double movies_i : big_map.get(i).map.keySet()) {
+		
+		count++;
+		double real_r  = big_map.get(i).map.get(movies_i);
+		
+		double r_k = predict_r(top_users, big_map, i,  movies_i);
+		
+		numer = numer + Math.pow((r_k -real_r), 2);
+	}
+	double  RMSE = Math.pow((numer / count), .5);
+	return RMSE;
+}
+	
+
+public static double RMSE_movie(Set<String> top_users, HashMap<String, UserInfo> big_map, double movie   ) {
+	// how to find every user of a certain movie
+	double  numer=0;
+	int count=0;
+	for(String user : big_map.keySet()) {
+		
+		if(big_map.get(user).map.containsKey(movie)) {
+			
+			count++;
+			double real_r  = big_map.get(user).map.get(movie);
+			
+			double r_k = predict_r(top_users, big_map, user,  movie);
+			
+			numer = numer + Math.pow((r_k -real_r), 2);
+			
+			
+		}
+		
+	}
+	double  RMSE = Math.pow((numer / count), .5);
+	return RMSE;
+}
+
+	
+	public static void main(String[] args) throws Exception {
+		
+	
+		File[] all_movies = get_all_movies();
+		long startTime = System.nanoTime();
+				
+		HashMap<String, UserInfo> big_map= put_into_map( all_movies);
+		
+
+		
+		
+		
+		
+		   long endTime = System.nanoTime();
+   	 
+		    
+        long timeElapsed = endTime - startTime;
+       
+        System.out.println("Execution time for creating map in milliseconds  : " + timeElapsed/ 1000000);
+		
+		
+
+		  
+        
+     long startTimes = System.nanoTime();
+     
+    Set<String> top_users= get_P_i_j( big_map, "1745265");
+    	
+    	//CANNOT BELIEVE THIS FINALLY WORKS WOW	
+    	 
+   double r_k =(predict_r(top_users, big_map, "1745265", 5));
+     System.out.println(r_k);
+// double RMSE= RMSE_user_i( top_users, "885013" , big_map   )	;
+        //System.out.println("RMSE is: " + RMSE);
+		
+   // double RMSE=RMSE_movie( top_users, big_map, 2   ) ;  
+   // System.out.println("RMSE is: " + RMSE);
+        
+        long endTimes = System.nanoTime();
+   	 
+	    
+        long timeElapseds = endTimes - startTimes;
+       
+        System.out.println("Execution time for creating P_value in milliseconds  : " + timeElapseds/ 1000000);
+        
+       
+		
+			//System.out.println(d/b);
+	
+	}
+	}
