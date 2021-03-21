@@ -9,6 +9,8 @@ However, in order to acess these values I had to be able to acess a specific "Us
 
 Storing these values of each user, movie number and coresponding movie rating, I plugged these values into a plethora of different equations given by the PDF above to solve for which other users were most similar to a given user in terms of what movies they liked. neighbors, I used the mergeSort algorithm to rank these users in terms of top 100 most similar neighbors. After doing this, I plugged into another equation above in the PDF to get the predicted rating of a user for a given movie.
 
+In the end, my predicitons had an RMSE or root mean square error of .6, meaning if someone rated a movie as a 4, my prediction ranged between 3.4 and 4.6.
+
 Quite a challenging and thrilling weekend project.
 
 
