@@ -3,7 +3,7 @@
 
 WHAT IS THIS HOW DID I MAKE IT?
 ---------------
-This project is a Netflix Movie Recommendation Engine that uses Machine learning algorithms in the 'PDF' above to solve for a predicted movie rating 'r' of user 'U' for a specific movie 'm'. As of now, I am able to get an predicted rating of around 80-85 Percent which is quite good considering the ratings are a value beween 1-5. That means if I want to know what user 200 will think of movie number 22, if the real prediction of user 200 is 4, I will get a prediction between 3.25 and 4.75. 
+This project is a Netflix Movie Recommendation Engine that uses Machine learning algorithms in the 'PDF' above to solve for a predicted movie rating 'r' of user 'U' for a specific movie 'm'. As of now, I am able to get an predicted rating of around 80-85 Percent which is quite good considering the ratings are a value beween 1-5. That means if I want to know what user 200 will think of movie number 22, if the real prediction of user 200 is 4, I will get a prediction between 3.25 and 4.75 on average. 
 
 Here is how I made it:
 
