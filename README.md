@@ -3,9 +3,9 @@
 
 WHAT IS THIS HOW DID I MAKE IT?
 ---------------
-This project is a Netflix Movie Recommendation Engine that uses Machine learning algorithms in the 'PDF' above to solve for a predicted movie rating 'r' of user 'U' for a specific movie 'm'. As of now, I am able to get an predicted rating of around 80-85 Percent which is quite good considering the ratings are a value beween 1-5.
+This project is a Netflix Movie Recommendation Engine that uses Machine learning algorithms in the 'PDF' above to solve for a predicted movie rating 'r' of user 'U' for a specific movie 'm'. As of now, I am able to get an predicted rating of around 80-85 Percent which is quite good considering the ratings are a value beween 1-5. That means if I want to know what user 200 will think of movie number 22, if the real prediction of user 200 is 4, I will get a prediction between 3.25 and 4.75. 
 
-Here is how it works:
+Here is how I made it:
 
  First we need to store all of our data from the textfiles. I only put 2 of them in the GITHUB section because all 2,000 would not fit. However, the same concept applies for 2 as with 2000, we simply won't get meaningful results with 2. In order to store the Data, I had to think through what data structures would be most efficient. Efficiency was paramount for this project because we were dealing with large data sets. I had to store the User ID, the specific movies a user rates and their respective ratings for that specifc movie. At first, I used an ArrayList but quickly found out it would take hours to get any results back this way. 
  
